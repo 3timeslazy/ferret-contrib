@@ -28,14 +28,18 @@ func (f *File) Compare(other core.Value) int64 {
 	}
 
 	otherf := other.Unwrap().(*os.File)
-	otherinfo, err := otherf.Stat()
-	if err != nil {
-		return -1
-	}
 
-	srcinfo, err := f.File.Stat()
-	if err != nil {
+	otherinfo, othererr := otherf.Stat()
+	srcinfo, srcerr := f.File.Stat()
+
+	if othererr != nil && srcerr != nil {
+		return 0
+	}
+	if othererr != nil {
 		return 1
+	}
+	if srcerr != nil {
+		return -1
 	}
 
 	sizediff := srcinfo.Size() - otherinfo.Size()

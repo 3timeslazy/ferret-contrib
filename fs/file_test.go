@@ -93,7 +93,7 @@ func TestFile(t *testing.T) {
 			f2.Close()
 		})
 
-		Convey("Should return -1 when other file is broken", func() {
+		Convey("Should return 1 when other file is broken", func() {
 			f1, err := ioutil.TempFile("", "*.Compare")
 			So(err, ShouldBeNil)
 			f2, err := ioutil.TempFile("", "*.Compare")
@@ -107,12 +107,12 @@ func TestFile(t *testing.T) {
 			file1 := fs.File{File: f1}
 			file2 := fs.File{File: f2}
 
-			So(file1.Compare(&file2), ShouldEqual, -1)
+			So(file1.Compare(&file2), ShouldEqual, 1)
 
 			f1.Close()
 		})
 
-		Convey("Should return 1 when src file is broken", func() {
+		Convey("Should return -1 when src file is broken", func() {
 			f1, err := ioutil.TempFile("", "*.Compare")
 			So(err, ShouldBeNil)
 			f2, err := ioutil.TempFile("", "*.Compare")
@@ -126,12 +126,32 @@ func TestFile(t *testing.T) {
 			file1 := fs.File{File: f1}
 			file2 := fs.File{File: f2}
 
-			So(file1.Compare(&file2), ShouldEqual, 1)
+			So(file1.Compare(&file2), ShouldEqual, -1)
 
 			f2.Close()
 		})
 
-		Convey("Should return ??? when both files are broken", func() {})
+		Convey("Should return 0 when both files are broken", func() {
+			f1, err := ioutil.TempFile("", "*.Compare")
+			So(err, ShouldBeNil)
+			f2, err := ioutil.TempFile("", "*.Compare")
+			So(err, ShouldBeNil)
+
+			err = f1.Close()
+			So(err, ShouldBeNil)
+			err = os.Remove(f1.Name())
+			So(err, ShouldBeNil)
+
+			err = f2.Close()
+			So(err, ShouldBeNil)
+			err = os.Remove(f2.Name())
+			So(err, ShouldBeNil)
+
+			file1 := fs.File{File: f1}
+			file2 := fs.File{File: f2}
+
+			So(file1.Compare(&file2), ShouldEqual, 0)
+		})
 	})
 
 	Convey("Unwrap", t, func() {
