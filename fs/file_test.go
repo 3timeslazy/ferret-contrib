@@ -1,9 +1,11 @@
 package fs_test
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/MontFerret/ferret-contrib/fs"
@@ -192,7 +194,36 @@ func TestFile(t *testing.T) {
 		})
 	})
 
-	Convey(".Copy", t, func() {})
+	Convey(".Copy", t, func() {
+		f1, err := ioutil.TempFile("", "*.Copy")
+		So(err, ShouldBeNil)
 
-	Convey(".MarshalJSON", t, func() {})
+		file := fs.File{File: f1}
+		cpy := file.Copy().(*fs.File)
+
+		So(cpy.String(), ShouldEqual, file.String())
+		So(cpy.File.Fd(), ShouldNotEqual, file.File.Fd())
+
+		f1.Close()
+		cpy.File.Close()
+	})
+
+	Convey(".MarshalJSON", t, func() {
+		f, err := ioutil.TempFile("", "*.Compare")
+		So(err, ShouldBeNil)
+
+		_, err = f.WriteString("Hello, World!")
+		So(err, ShouldBeNil)
+
+		expected := base64.StdEncoding.EncodeToString([]byte("Hello, World!"))
+
+		file := fs.File{File: f}
+
+		b, err := file.MarshalJSON()
+		So(err, ShouldBeNil)
+
+		actual := strings.Trim(string(b), `"`)
+
+		So(actual, ShouldEqual, expected)
+	})
 }

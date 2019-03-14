@@ -2,6 +2,7 @@ package fs
 
 import (
 	"bufio"
+	"encoding/json"
 	"hash/fnv"
 	"io/ioutil"
 	"os"
@@ -91,5 +92,10 @@ func (f *File) Copy() core.Value {
 }
 
 func (f *File) MarshalJSON() ([]byte, error) {
-	panic("not implemented")
+	data, err := ioutil.ReadFile(f.File.Name())
+	if err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(data)
 }
