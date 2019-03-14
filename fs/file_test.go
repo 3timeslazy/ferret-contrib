@@ -165,7 +165,32 @@ func TestFile(t *testing.T) {
 		So(f, ShouldResemble, srcf)
 	})
 
-	Convey(".Hash", t, func() {})
+	Convey(".Hash", t, func() {
+
+		Convey("Hello, World!", func() {
+			f, err := ioutil.TempFile("", "*.Compare")
+			So(err, ShouldBeNil)
+
+			_, err = f.WriteString("Hello, World!")
+			So(err, ShouldBeNil)
+
+			file := fs.File{File: f}
+
+			So(file.Hash(), ShouldEqual, uint64(12929210625501246462))
+		})
+
+		Convey("Hash sum should be consistent", func() {
+			f, err := ioutil.TempFile("", "*.Compare")
+			So(err, ShouldBeNil)
+
+			_, err = f.WriteString("Hello, World!")
+			So(err, ShouldBeNil)
+
+			file := fs.File{File: f}
+
+			So(file.Hash(), ShouldEqual, file.Hash())
+		})
+	})
 
 	Convey(".Copy", t, func() {})
 

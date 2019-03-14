@@ -1,6 +1,9 @@
 package fs
 
 import (
+	"bufio"
+	"hash/fnv"
+	"io/ioutil"
 	"os"
 
 	"github.com/MontFerret/ferret/pkg/runtime/core"
@@ -60,7 +63,22 @@ func (f *File) Unwrap() interface{} {
 }
 
 func (f *File) Hash() uint64 {
-	panic("not implemented")
+	content, err := ioutil.ReadFile(f.File.Name())
+	if err != nil {
+		return 0
+	}
+
+	h := fnv.New64a()
+	buf := bufio.NewWriter(h)
+
+	buf.Write([]byte(f.Type().String()))
+	buf.Write([]byte(":"))
+	buf.Write(content)
+	if buf.Flush() != nil {
+		return 0
+	}
+
+	return h.Sum64()
 }
 
 func (f *File) Copy() core.Value {
