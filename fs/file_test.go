@@ -170,7 +170,7 @@ func TestFile(t *testing.T) {
 	Convey(".Hash", t, func() {
 
 		Convey("Hello, World!", func() {
-			f, err := ioutil.TempFile("", "*.Compare")
+			f, err := ioutil.TempFile("", "*.Hash")
 			So(err, ShouldBeNil)
 
 			_, err = f.WriteString("Hello, World!")
@@ -182,7 +182,7 @@ func TestFile(t *testing.T) {
 		})
 
 		Convey("Hash sum should be consistent", func() {
-			f, err := ioutil.TempFile("", "*.Compare")
+			f, err := ioutil.TempFile("", "*.Hash")
 			So(err, ShouldBeNil)
 
 			_, err = f.WriteString("Hello, World!")
@@ -209,7 +209,7 @@ func TestFile(t *testing.T) {
 	})
 
 	Convey(".MarshalJSON", t, func() {
-		f, err := ioutil.TempFile("", "*.Compare")
+		f, err := ioutil.TempFile("", "*.MarshalJSON")
 		So(err, ShouldBeNil)
 
 		_, err = f.WriteString("Hello, World!")
